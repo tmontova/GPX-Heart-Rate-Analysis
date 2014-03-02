@@ -27,59 +27,56 @@ public class Analyze {
 			prev = g;
 		}
 	}
-	public void distribute(){
+
+	/**
+	 * Creates the zones that the data will fit in
+	 * Should take in array of crucial points,
+	 * where hr zone changes to next
+	 */
+	public void createZones(int[] z){
 		GPXNode prev = null;
 		for(int i = 0; i < nodes.size(); i ++){
 			GPXNode g = nodes.get(i);
 			if(prev != null){
-				arr[g.getHR()] = dateDifference(g, prev) + arr[g.getHR()];
-			}
-			prev = g;
-		}
-		for(int i = 0; i < arr.length; i++){
-			System.out.println(i+": "+arr[i]);
-		}
-	}
-	
-	public void createZones(){
-		GPXNode prev = null;
-		for(int i = 0; i < nodes.size(); i ++){
-			GPXNode g = nodes.get(i);
-			if(prev != null){
-				if(g.getHR() < 120)
+				if(g.getHR() < z[0])
 					z1.add(dateDifference(g, prev));
-				else if(g.getHR() >120 && g.getHR() < 135)
+				else if(g.getHR() > z[0] && g.getHR() < z[1])
 					z2.add(dateDifference(g, prev));
-				else if(g.getHR() >135 && g.getHR() < 150)
+				else if(g.getHR() > z[1] && g.getHR() < z[2])
 					z3.add(dateDifference(g, prev));
-				else if(g.getHR() >150 && g.getHR() <168 )
+				else if(g.getHR() > z[2] && g.getHR() < z[3])
 					z4.add(dateDifference(g, prev));
-				else if(g.getHR() >168)
+				else if(g.getHR() > z[3])
 					z5.add(dateDifference(g, prev));
 			}
 			prev = g;
 		}
 	}
-	
-	public void normalize(){
+	/**
+	 * Removes any data points that are greater than the threshold;
+	 * threshold = length of time in between data points;
+	 * if it is beyond this threshold, it is likely the function
+	 * is not continuous i.e. paused Garmin
+	 */
+	public void normalize(int threshold){
 		for(int i = 0; i < z1.size(); i++){
-			if(z1.get(i) > 10)
+			if(z1.get(i) > threshold)
 				z1.remove(i);
 		}
 		for(int i = 0; i < z2.size(); i++){
-			if(z2.get(i) > 10)
+			if(z2.get(i) > threshold)
 				z2.remove(i);
 		}
 		for(int i = 0; i < z3.size(); i++){
-			if(z3.get(i) > 10)
+			if(z3.get(i) > threshold)
 				z3.remove(i);
 		}
 		for(int i = 0; i < z4.size(); i++){
-			if(z4.get(i) > 10)
+			if(z4.get(i) > threshold)
 				z4.remove(i);
 		}
 		for(int i = 0; i < z5.size(); i++){
-			if(z5.get(i) > 10)
+			if(z5.get(i) > threshold)
 				z5.remove(i);
 		}
 	}
@@ -114,10 +111,12 @@ public class Analyze {
 		}
 	}
 	
-	public void routine(){
-		createZones();
-		normalize();
+	public int[] routine(){
+		int[] z = {111, 129, 148, 166};
+		createZones(z);
+		normalize(10);
 		formatPrint(tally());
+		return tally();
 	}
 	
 	

@@ -32,9 +32,6 @@ public class GParser {
 		
 			NodeList hrList = doc.getElementsByTagName("gpxtpx:hr");
 			NodeList timeList = doc.getElementsByTagName("time");
-			
-		
-
 	        String pattern = "yyyy-MM-dd'T'hh:mm:ss";
 	        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 			
